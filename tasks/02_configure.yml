@@ -1,0 +1,23 @@
+---
+- name: Configure nginx
+  block:
+    - name: Define nginx_user
+      ansible.builtin.set_fact:
+        nginx_user: "{{ __nginx_user }}"
+      when: nginx_user is not defined
+
+    - name: Copy nginx configuration in place
+      ansible.builtin.template:
+        src: "{{ nginx_conf_template }}"
+        dest: "{{ nginx_conf_file_path }}"
+        owner: root
+        group: "{{ root_group }}"
+        mode: 0644
+      notify: Reload Nginx
+
+    - name: Ensure nginx service is running as configured
+      ansible.builtin.service:
+        name: nginx
+        state: "{{ nginx_service_state }}"
+        enabled: "{{ nginx_service_enabled }}"
+      become: true

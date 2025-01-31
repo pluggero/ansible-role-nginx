@@ -1,0 +1,19 @@
+---
+- name: Ensure we are using dnf
+  ansible.builtin.fail:
+    msg: "This role only supports {{ ansible_os_family }} systems that use dnf as a package manager."
+  when: ansible_pkg_mgr != "dnf"
+
+- name: Install nginx via dnf
+  when: ansible_pkg_mgr == "dnf"
+  block:
+    - name: Update dnf cache
+      ansible.builtin.dnf:
+        update_cache: true
+      become: true
+
+    - name: Ensure nginx is installed
+      ansible.builtin.dnf:
+        name: "{{ nginx_distro_pkgs }}"
+        state: present
+      become: true
