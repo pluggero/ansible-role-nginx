@@ -13,6 +13,7 @@
         owner: root
         group: "{{ root_group }}"
         mode: 0644
+      become: true
       notify: Reload Nginx
 
     - name: Ensure nginx service is running as configured
